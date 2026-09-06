@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Pramaan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#14183A;
+  --navy-soft:#7178A6;
+  --cream:#F7F3E9;
+  --cream-dim:#EEE7D6;
+  --cream-soft:#C7CBE4;
+  --green:#37B676;
+  --green-deep:#279158;
+  --white:#FFFFFF;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--cream); color:var(--navy);
+  font-family:'IBM Plex Sans', sans-serif; font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:'Fraunces', serif; font-weight:500; letter-spacing:-0.01em;}
+a{color:inherit;}
+.wrap{max-width:760px; margin:0 auto; padding:0 32px;}
+@media(max-width:640px){.wrap{padding:0 22px;}}
+
+/* header */
+header{background:var(--navy); color:var(--cream);}
+.header-inner{max-width:1160px; margin:0 auto; padding:22px 32px; display:flex; align-items:center; justify-content:space-between;}
+@media(max-width:640px){.header-inner{padding:22px;}}
+.logo{font-family:'Fraunces', serif; font-size:21px; font-weight:600; text-decoration:none; color:var(--cream);}
+.logo span{color:var(--green);}
+.header-actions{display:flex; align-items:center; gap:18px; font-size:14px;}
+.header-actions a{text-decoration:none; color:var(--cream-soft);}
+.header-actions a:hover{color:var(--cream);}
+.btn{
+  font-family:'IBM Plex Sans', sans-serif; font-size:14px; font-weight:500;
+  padding:10px 20px; border:1px solid var(--cream); border-radius:5px;
+  background:transparent; color:var(--cream); cursor:pointer; text-decoration:none; display:inline-block;
+  transition:opacity .15s ease;
+}
+.btn:hover{opacity:0.85;}
+.btn-fill{background:var(--green); color:var(--navy); border-color:var(--green); font-weight:600;}
+.btn-block{width:100%; text-align:center;}
+.btn-dark{border-color:rgba(20,24,58,0.3); color:var(--navy);}
+
+/* intro band */
+.intro{background:var(--navy); color:var(--cream); padding:64px 0 56px;}
+.intro h1{font-size:40px; max-width:16ch; margin-bottom:16px;}
+.intro p{font-family:'Source Serif 4', serif; font-size:17px; color:var(--cream-soft); max-width:48ch; line-height:1.6; margin-bottom:40px;}
+
+/* account type tabs (CSS only) */
+.type-tabs{display:flex; gap:0; border:1px solid rgba(247,243,233,0.3); border-radius:8px; overflow:hidden; max-width:520px;}
+.type-radio{display:none;}
+.type-label{
+  flex:1; text-align:center; padding:16px 18px; cursor:pointer; font-size:14.5px; font-weight:500;
+  color:var(--cream-soft); transition:background .15s ease, color .15s ease;
+}
+.type-label small{display:block; font-weight:400; font-size:12px; color:var(--cream-soft); margin-top:3px; opacity:0.75;}
+.type-radio:checked + .type-label{background:var(--green); color:var(--navy);}
+.type-radio:checked + .type-label small{color:var(--navy); opacity:0.7;}
+
+/* form area */
+.form-section{padding:56px 0;}
+.field-group{display:none;}
+.type-radio#type-org:checked ~ .form-section #org-fields{display:block;}
+.type-radio#type-bidder:checked ~ .form-section #bidder-fields{display:block;}
+
+.block{margin-bottom:52px;}
+.block h3{font-size:19px; margin-bottom:6px;}
+.block .block-sub{font-size:13.5px; color:var(--navy-soft); margin-bottom:26px;}
+
+.fields-2col{display:grid; grid-template-columns:1fr 1fr; gap:0 32px;}
+@media(max-width:600px){.fields-2col{grid-template-columns:1fr;}}
+
+.field{margin-bottom:22px;}
+.field label{display:block; font-size:13px; color:var(--navy-soft); margin-bottom:7px;}
+.field input, .field select{
+  width:100%; border:none; border-bottom:1px solid rgba(20,24,58,0.25);
+  background:transparent; padding:8px 0; font-size:15px; font-family:'IBM Plex Sans', sans-serif; color:var(--navy);
+  appearance:none; -webkit-appearance:none; border-radius:0;
+}
+.field select{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%237178A6' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat; background-position:right 4px center; padding-right:20px;
+}
+.field input:focus, .field select:focus{outline:none; border-bottom-color:var(--green);}
+.field input::placeholder{color:rgba(20,24,58,0.32);}
+.field.full{grid-column:1 / -1;}
+
+/* upload rows */
+.upload-row{
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+  padding:16px 0; border-bottom:1px dashed rgba(20,24,58,0.28);
+}
+.upload-row .u-name{font-size:14.5px; font-weight:500;}
+.upload-row .u-hint{font-size:12px; color:var(--navy-soft); margin-top:2px;}
+.upload-row input[type=file]{display:none;}
+.upload-row .upload-btn{
+  font-size:12.5px; color:var(--green-deep); border:1px solid var(--green-deep); border-radius:5px;
+  padding:8px 14px; cursor:pointer; white-space:nowrap;
+}
+
+.declare{display:flex; gap:10px; font-size:13.5px; color:var(--navy-soft); margin-bottom:16px; align-items:flex-start;}
+.declare input{accent-color:var(--green); margin-top:3px;}
+
+.foot-links{margin-top:36px; text-align:center; font-size:13.5px; color:var(--navy-soft);}
+.foot-links a{color:var(--green-deep); text-decoration:none; font-weight:500;}
+.foot-links a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">Pramaan<span>.</span></a>
+    <div class="header-actions">
+      <span>Already registered?</span>
+      <a href="login.html" class="btn">Log in</a>
+    </div>
+  </div>
+</header>
+
+<input type="radio" name="acct-type" id="type-org" class="type-radio" checked>
+<input type="radio" name="acct-type" id="type-bidder" class="type-radio">
+
+<section class="intro">
+  <div class="wrap">
+    <h1>Set up your account.</h1>
+    <p>Most of what you enter here gets verified automatically the moment you submit it — you won't need to prove it twice.</p>
+    <div class="type-tabs">
+      <label for="type-org" class="type-label">Organization<small>Buyer / CPSE</small></label>
+      <label for="type-bidder" class="type-label">Bidder<small>Seller / Vendor</small></label>
+    </div>
+  </div>
+</section>
+
+<div class="form-section">
+  <div class="wrap">
+
+    <!-- ORGANIZATION FIELDS -->
+    <div id="org-fields" class="field-group">
+      <div class="block">
+        <h3>Organization details</h3>
+        <p class="block-sub">This is what bidders will see as the publishing authority on your tenders.</p>
+        <div class="fields-2col">
+          <div class="field"><label>Organization name</label><input type="text" placeholder="e.g. Chennai Petroleum Corporation Ltd."></div>
+          <div class="field">
+            <label>Organization type</label>
+            <select><option>CPSE</option><option>Ministry</option><option>Department</option><option>PSU</option></select>
+          </div>
+          <div class="field"><label>GST number</label><input type="text" placeholder="22AAAAA0000A1Z5"></div>
+          <div class="field"><label>PAN number</label><input type="text" placeholder="AAAAA0000A"></div>
+          <div class="field"><label>Official email</label><input type="email" placeholder="procurement@organization.gov.in"></div>
+          <div class="field"><label>Phone number</label><input type="tel" placeholder="+91"></div>
+          <div class="field full"><label>Registered address</label><input type="text" placeholder="Street, city, state, PIN"></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Admin user details</h3>
+        <p class="block-sub">The person who'll manage tenders and users on this account.</p>
+        <div class="fields-2col">
+          <div class="field"><label>Full name</label><input type="text"></div>
+          <div class="field"><label>Designation</label><input type="text" placeholder="e.g. Deputy Manager, Procurement"></div>
+          <div class="field"><label>Email</label><input type="email"></div>
+          <div class="field"><label>Phone</label><input type="tel"></div>
+          <div class="field"><label>Password</label><input type="password"></div>
+          <div class="field"><label>Confirm password</label><input type="password"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIDDER FIELDS -->
+    <div id="bidder-fields" class="field-group">
+      <div class="block">
+        <h3>Company details</h3>
+        <p class="block-sub">This is what buyers will see when they review your bids.</p>
+        <div class="fields-2col">
+          <div class="field"><label>Company name</label><input type="text"></div>
+          <div class="field">
+            <label>Business type</label>
+            <select><option>Manufacturer</option><option>Supplier</option><option>Service provider</option><option>OEM</option></select>
+          </div>
+          <div class="field"><label>GST number</label><input type="text" placeholder="22AAAAA0000A1Z5"></div>
+          <div class="field"><label>PAN number</label><input type="text" placeholder="AAAAA0000A"></div>
+          <div class="field"><label>Udyam registration number</label><input type="text" placeholder="UDYAM-XX-00-0000000"></div>
+          <div class="field"><label>Official email</label><input type="email"></div>
+          <div class="field"><label>Phone number</label><input type="tel" placeholder="+91"></div>
+          <div class="field full"><label>Business address</label><input type="text" placeholder="Street, city, state, PIN"></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Primary contact person</h3>
+        <p class="block-sub">Who we'll reach for anything related to your bids and compliance status.</p>
+        <div class="fields-2col">
+          <div class="field"><label>Full name</label><input type="text"></div>
+          <div class="field"><label>Designation</label><input type="text"></div>
+          <div class="field"><label>Email</label><input type="email"></div>
+          <div class="field"><label>Phone</label><input type="tel"></div>
+          <div class="field"><label>Password</label><input type="password"></div>
+          <div class="field"><label>Confirm password</label><input type="password"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENT UPLOAD (shared) -->
+    <div class="block">
+      <h3>Documents</h3>
+      <p class="block-sub">PDF or image, up to 5MB each. You can also add these later from your profile.</p>
+
+      <div class="upload-row">
+        <div><div class="u-name">GST certificate</div><div class="u-hint">Not uploaded</div></div>
+        <label class="upload-btn">Choose file<input type="file"></label>
+      </div>
+      <div class="upload-row">
+        <div><div class="u-name">PAN card</div><div class="u-hint">Not uploaded</div></div>
+        <label class="upload-btn">Choose file<input type="file"></label>
+      </div>
+      <div class="upload-row">
+        <div><div class="u-name">Udyam / MSME certificate</div><div class="u-hint">Not uploaded</div></div>
+        <label class="upload-btn">Choose file<input type="file"></label>
+      </div>
+      <div class="upload-row">
+        <div><div class="u-name">Company registration certificate</div><div class="u-hint">Not uploaded</div></div>
+        <label class="upload-btn">Choose file<input type="file"></label>
+      </div>
+      <div class="upload-row">
+        <div><div class="u-name">Authorized signatory ID proof</div><div class="u-hint">Not uploaded</div></div>
+        <label class="upload-btn">Choose file<input type="file"></label>
+      </div>
+    </div>
+
+    <div class="block" style="margin-bottom:8px;">
+      <label class="declare"><input type="checkbox">I confirm the information provided is accurate, and I'm authorized to register this organization on Pramaan.</label>
+    </div>
+
+    <a href="#" class="btn btn-fill btn-block">Create account</a>
+
+    <div class="foot-links">Already have an account? <a href="login.html">Log in</a></div>
+  </div>
+</div>
+
+</body>
+</html>

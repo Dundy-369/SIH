@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit bid — Pramaan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#14183A; --navy-soft:#7178A6;
+  --cream:#F7F3E9; --cream-dim:#EEE7D6;
+  --ink:#22263F;
+  --line:rgba(20,24,58,0.10);
+  --green:#37B676; --green-deep:#279158; --green-bg:#DFF3E7;
+  --amber:#C98A2E; --amber-bg:#F5E9D3;
+  --red:#C1473A; --red-bg:#F5DEDA;
+  --white:#FFFFFF;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--cream); color:var(--ink);
+  font-family:'IBM Plex Sans', sans-serif; font-size:14.5px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:'Fraunces', serif; font-weight:500; letter-spacing:-0.01em; color:var(--navy);}
+a{color:inherit; text-decoration:none;}
+
+/* minimal focused header */
+header{background:var(--white); border-bottom:1px solid var(--line); padding:18px 40px; display:flex; justify-content:space-between; align-items:center;}
+.logo{font-family:'Fraunces', serif; font-size:19px; font-weight:600; color:var(--navy);}
+.logo span{color:var(--green);}
+.h-context{font-size:12.5px; color:var(--navy-soft); text-align:right;}
+.h-context b{color:var(--navy); font-weight:500;}
+.exit-link{font-size:13px; color:var(--navy-soft);}
+.exit-link:hover{color:var(--navy);}
+.h-left{display:flex; align-items:center; gap:26px;}
+
+.wrap{max-width:840px; margin:0 auto; padding:0 24px;}
+
+/* stepper */
+.stepper{display:flex; align-items:center; padding:34px 0 8px;}
+.step-node{display:flex; flex-direction:column; align-items:center; flex:1; position:relative;}
+.step-circle{
+  width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:'IBM Plex Mono', monospace; font-size:13px; background:var(--white); border:2px solid var(--line); color:var(--navy-soft);
+  z-index:2; transition:all .15s ease;
+}
+.step-node.done .step-circle{background:var(--green); border-color:var(--green); color:var(--white);}
+.step-node.current .step-circle{border-color:var(--navy); color:var(--navy); font-weight:600;}
+.step-label{font-size:11.5px; color:var(--navy-soft); margin-top:9px; text-align:center; max-width:90px;}
+.step-node.current .step-label{color:var(--navy); font-weight:500;}
+.step-line{position:absolute; top:16px; left:-50%; width:100%; height:2px; background:var(--line); z-index:1;}
+.step-node:first-child .step-line{display:none;}
+.step-node.done .step-line{background:var(--green);}
+
+/* step panel */
+.step-panel{display:none; padding:36px 0 100px;}
+.step-panel.active{display:block;}
+.panel{background:var(--white); border:1px solid var(--line); border-radius:8px; margin-bottom:20px;}
+.panel-head{padding:22px 26px; border-bottom:1px solid var(--line);}
+.panel-head h2{font-size:19px; margin-bottom:5px;}
+.panel-head p{font-size:13px; color:var(--navy-soft);}
+.panel-body{padding:22px 26px;}
+
+/* eligibility */
+.elig-row{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+.elig-row:last-child{border-bottom:none;}
+.elig-ok{color:var(--green-deep); font-weight:500; font-size:12.5px;}
+.score-banner{display:flex; align-items:center; justify-content:space-between; background:var(--green-bg); border-radius:8px; padding:18px 22px; margin-bottom:6px;}
+.score-banner .num{font-family:'Fraunces', serif; font-size:32px; color:var(--green-deep);}
+.score-banner .lbl{font-size:13px; color:var(--green-deep); max-width:26ch; text-align:right;}
+.check-line{display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--ink); margin-top:20px;}
+.check-line input{accent-color:var(--green); width:15px; height:15px; margin-top:2px;}
+
+/* upload */
+.sub-head{font-size:13px; font-weight:600; color:var(--navy); margin:22px 0 6px;}
+.sub-head:first-child{margin-top:0;}
+.upload-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 0; border-bottom:1px dashed rgba(20,24,58,0.25);}
+.upload-row:last-child{border-bottom:none;}
+.upload-row .u-name{font-size:13.5px; font-weight:500;}
+.upload-row .u-name .req{color:var(--amber); font-size:11px; margin-left:6px; font-weight:400;}
+.upload-row .u-hint{font-size:11.5px; color:var(--navy-soft); margin-top:2px;}
+.upload-row input[type=file]{display:none;}
+.upload-row .upload-btn{font-size:12px; color:var(--green-deep); border:1px solid var(--green-deep); border-radius:5px; padding:7px 13px; cursor:pointer; white-space:nowrap;}
+.upload-row .upload-btn.done{color:var(--navy-soft); border-color:var(--line);}
+
+/* fields */
+.fields-2col{display:grid; grid-template-columns:1fr 1fr; gap:0 28px;}
+@media(max-width:600px){.fields-2col{grid-template-columns:1fr;}}
+.field{margin-bottom:22px;}
+.field label{display:block; font-size:13px; color:var(--navy-soft); margin-bottom:7px;}
+.field input, .field select, .field textarea{
+  width:100%; border:none; border-bottom:1px solid rgba(20,24,58,0.25);
+  background:transparent; padding:8px 0; font-size:14.5px; font-family:'IBM Plex Sans', sans-serif; color:var(--navy); resize:vertical;
+}
+.field input:focus, .field select:focus, .field textarea:focus{outline:none; border-bottom-color:var(--green);}
+.field.full{grid-column:1 / -1;}
+
+/* pricing table */
+.price-table{width:100%; border-collapse:collapse; margin-bottom:18px;}
+.price-table th{text-align:left; font-size:12px; color:var(--navy-soft); font-weight:500; padding:10px 8px; border-bottom:2px solid var(--navy);}
+.price-table td{padding:10px 8px; border-bottom:1px solid var(--line); font-size:13.5px;}
+.price-table input{width:100%; border:none; border-bottom:1px solid rgba(20,24,58,0.25); background:transparent; padding:6px 0; font-size:13.5px; color:var(--navy);}
+.price-total-row{display:flex; justify-content:flex-end; gap:40px; padding:14px 8px; font-size:14px;}
+.price-total-row b{font-family:'IBM Plex Mono', monospace; color:var(--navy);}
+
+/* payment */
+.pay-tabs{display:flex; gap:24px; border-bottom:1px solid var(--line); margin-bottom:22px;}
+.pay-radio{display:none;}
+.pay-label{font-size:13.5px; color:var(--navy-soft); padding-bottom:11px; border-bottom:2px solid transparent; margin-bottom:-1px; cursor:pointer;}
+.pay-radio:checked + .pay-label{color:var(--navy); font-weight:600; border-bottom-color:var(--green);}
+.emd-amount{background:var(--cream-dim); border-radius:8px; padding:18px 20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;}
+.emd-amount .num{font-family:'Fraunces', serif; font-size:26px; color:var(--navy);}
+.emd-amount .lbl{font-size:12.5px; color:var(--navy-soft);}
+
+/* review */
+.rev-block{margin-bottom:24px;}
+.rev-block h3{font-size:14.5px; margin-bottom:10px;}
+.rev-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+.rev-row:last-child{border-bottom:none;}
+.rev-row .k{color:var(--navy-soft);}
+.rev-row .v{font-weight:500;}
+.decl{display:flex; gap:10px; font-size:13px; color:var(--ink); margin-bottom:14px; align-items:flex-start;}
+.decl input{accent-color:var(--green); margin-top:3px;}
+
+/* nav buttons */
+.step-nav{display:flex; justify-content:space-between; align-items:center; padding-top:6px;}
+.btn{font-size:13.5px; font-weight:500; padding:11px 22px; border-radius:6px; border:1px solid var(--navy); color:var(--navy); cursor:pointer; display:inline-block; background:transparent;}
+.btn-fill{background:var(--green); border-color:var(--green); color:var(--navy); font-weight:600;}
+.btn-text{border:none; color:var(--navy-soft); padding:11px 4px;}
+
+/* confirmation */
+.confirm{display:none; text-align:center; padding:70px 0;}
+.confirm.active{display:block;}
+.confirm-icon{width:60px; height:60px; border-radius:50%; background:var(--green-bg); color:var(--green-deep); display:flex; align-items:center; justify-content:center; margin:0 auto 22px; font-size:26px;}
+.confirm h1{font-size:28px; margin-bottom:10px;}
+.confirm p{color:var(--navy-soft); font-size:14.5px; margin-bottom:26px;}
+.confirm .ref{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--navy); background:var(--cream-dim); display:inline-block; padding:10px 18px; border-radius:6px; margin-bottom:30px;}
+.confirm .actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-left">
+    <a href="bidder-dashboard.html" class="logo">Pramaan<span>.</span></a>
+    <a href="browse-tenders.html" class="exit-link">← Save &amp; exit</a>
+  </div>
+  <div class="h-context">Submitting bid for<br><b>GEM/2026/B/44198 — Industrial safety equipment</b></div>
+</header>
+
+<div class="wrap">
+  <div class="stepper" id="stepper">
+    <div class="step-node current" data-step="1"><div class="step-line"></div><div class="step-circle">1</div><div class="step-label">Review eligibility</div></div>
+    <div class="step-node" data-step="2"><div class="step-line"></div><div class="step-circle">2</div><div class="step-label">Upload documents</div></div>
+    <div class="step-node" data-step="3"><div class="step-line"></div><div class="step-circle">3</div><div class="step-label">Bid details</div></div>
+    <div class="step-node" data-step="4"><div class="step-line"></div><div class="step-circle">4</div><div class="step-label">Pay EMD</div></div>
+    <div class="step-node" data-step="5"><div class="step-line"></div><div class="step-circle">5</div><div class="step-label">Review &amp; submit</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-panel active" id="panel-1">
+    <div class="panel">
+      <div class="panel-head"><h2>Review your eligibility</h2><p>We checked this automatically against the tender's criteria.</p></div>
+      <div class="panel-body">
+        <div class="score-banner">
+          <div class="num">91<span style="font-size:16px;">/100</span></div>
+          <div class="lbl">Your compliance match for this tender</div>
+        </div>
+        <div class="elig-row"><span>Minimum turnover (₹3 crore required)</span><span class="elig-ok">✓ Met</span></div>
+        <div class="elig-row"><span>Years in business (5+ required)</span><span class="elig-ok">✓ Met</span></div>
+        <div class="elig-row"><span>MSME registration</span><span class="elig-ok">✓ Verified — Udyam registered</span></div>
+        <div class="elig-row"><span>GST, PAN &amp; company registration</span><span class="elig-ok">✓ Verified</span></div>
+        <div class="elig-row"><span>Technical certifications (ISO 9001, BIS)</span><span class="elig-ok">✓ On file</span></div>
+        <label class="check-line"><input type="checkbox">I confirm the details above are accurate and I want to proceed with this bid.</label>
+      </div>
+    </div>
+    <div class="step-nav"><span></span><a href="#" class="btn btn-fill" onclick="goTo(2); return false;">Continue</a></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-panel" id="panel-2">
+    <div class="panel">
+      <div class="panel-head"><h2>Upload documents</h2><p>Statutory documents already on file are pre-filled — replace them only if they've changed.</p></div>
+      <div class="panel-body">
+        <div class="sub-head">Statutory documents</div>
+        <div class="upload-row"><div><div class="u-name">GST certificate</div><div class="u-hint">On file — verified 12 Aug 2026</div></div><label class="upload-btn done">Replace<input type="file"></label></div>
+        <div class="upload-row"><div><div class="u-name">PAN card</div><div class="u-hint">On file — verified 12 Aug 2026</div></div><label class="upload-btn done">Replace<input type="file"></label></div>
+        <div class="upload-row"><div><div class="u-name">Udyam certificate</div><div class="u-hint">On file — verified 12 Aug 2026</div></div><label class="upload-btn done">Replace<input type="file"></label></div>
+        <div class="upload-row"><div><div class="u-name">EPFO compliance</div><div class="u-hint">Expires in 15 days</div></div><label class="upload-btn">Choose file<input type="file"></label></div>
+
+        <div class="sub-head">Technical documents</div>
+        <div class="upload-row"><div><div class="u-name">Technical proposal<span class="req">Mandatory</span></div><div class="u-hint">Not uploaded</div></div><label class="upload-btn">Choose file<input type="file"></label></div>
+        <div class="upload-row"><div><div class="u-name">Product specifications</div><div class="u-hint">Not uploaded</div></div><label class="upload-btn">Choose file<input type="file"></label></div>
+        <div class="upload-row"><div><div class="u-name">Test reports &amp; quality certificates</div><div class="u-hint">Not uploaded</div></div><label class="upload-btn">Choose file<input type="file"></label></div>
+
+        <div class="sub-head">Financial documents</div>
+        <div class="upload-row"><div><div class="u-name">Price bid<span class="req">Mandatory</span></div><div class="u-hint">Download the BOQ template, fill it, then upload</div></div><label class="upload-btn">Choose file<input type="file"></label></div>
+        <div class="upload-row"><div><div class="u-name">Audited financial statements</div><div class="u-hint">Not uploaded</div></div><label class="upload-btn">Choose file<input type="file"></label></div>
+
+        <div class="sub-head">Additional documents</div>
+        <div class="upload-row"><div><div class="u-name">Past performance certificates</div><div class="u-hint">Up to 5 files</div></div><label class="upload-btn">Choose files<input type="file" multiple></label></div>
+      </div>
+    </div>
+    <div class="step-nav"><a href="#" class="btn btn-text" onclick="goTo(1); return false;">Back</a><a href="#" class="btn btn-fill" onclick="goTo(3); return false;">Continue</a></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-panel" id="panel-3">
+    <div class="panel">
+      <div class="panel-head"><h2>Technical bid</h2></div>
+      <div class="panel-body">
+        <div class="fields-2col">
+          <div class="field"><label>Make / model number</label><input type="text"></div>
+          <div class="field"><label>Country of origin</label><input type="text" value="India"></div>
+          <div class="field"><label>Local content (%)</label><input type="number" value="42"></div>
+          <div class="field"><label>Delivery timeline (days from LOA)</label><input type="number"></div>
+          <div class="field"><label>Warranty period</label><input type="text" placeholder="e.g. 5 years"></div>
+          <div class="field"><label>Installation / commissioning timeline</label><input type="text"></div>
+        </div>
+        <div class="field full"><label>Technical specifications (as per BOQ)</label><textarea rows="3" placeholder="Describe how your offering meets each specification line."></textarea></div>
+        <div class="field full"><label>Deviations from tender terms, if any</label><textarea rows="2" placeholder="Leave blank if none"></textarea></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Financial bid</h2><p>Pricing follows the tender's bill of quantities.</p></div>
+      <div class="panel-body">
+        <table class="price-table">
+          <thead><tr><th>Item</th><th>Qty</th><th>Unit price (₹)</th><th>Total (₹)</th></tr></thead>
+          <tbody>
+            <tr><td>Fender unit — Type A</td><td>24</td><td><input type="number" class="unit-price" data-qty="24" oninput="calcRow(this)"></td><td class="row-total mono">0</td></tr>
+            <tr><td>Mounting hardware set</td><td>24</td><td><input type="number" class="unit-price" data-qty="24" oninput="calcRow(this)"></td><td class="row-total mono">0</td></tr>
+            <tr><td>Installation service</td><td>1</td><td><input type="number" class="unit-price" data-qty="1" oninput="calcRow(this)"></td><td class="row-total mono">0</td></tr>
+          </tbody>
+        </table>
+        <div class="price-total-row"><span>Grand total</span><b id="grandTotal">₹0</b></div>
+        <div class="fields-2col">
+          <div class="field"><label>GST (%)</label><select id="gstRate" onchange="calcGST()"><option value="18">18%</option><option value="12">12%</option><option value="5">5%</option></select></div>
+          <div class="field"><label>Bid validity (days)</label><input type="number" value="90"></div>
+        </div>
+        <div class="price-total-row" style="border-top:1px solid var(--line);"><span>Total incl. GST</span><b id="totalGST">₹0</b></div>
+      </div>
+    </div>
+    <div class="step-nav"><a href="#" class="btn btn-text" onclick="goTo(2); return false;">Back</a><a href="#" class="btn btn-fill" onclick="goTo(4); return false;">Continue</a></div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-panel" id="panel-4">
+    <div class="panel">
+      <div class="panel-head"><h2>Pay bid security (EMD)</h2></div>
+      <div class="panel-body">
+        <div class="emd-amount"><div><div class="lbl">Bid security amount</div><div class="num">₹85,000</div></div><div class="lbl">Refundable if unsuccessful</div></div>
+
+        <input type="radio" name="pay" id="p1" class="pay-radio" checked><input type="radio" name="pay" id="p2" class="pay-radio"><input type="radio" name="pay" id="p3" class="pay-radio"><input type="radio" name="pay" id="p4" class="pay-radio">
+        <div class="pay-tabs">
+          <label for="p1" class="pay-label">Net banking</label>
+          <label for="p2" class="pay-label">Card</label>
+          <label for="p3" class="pay-label">UPI</label>
+          <label for="p4" class="pay-label">Bank guarantee</label>
+        </div>
+
+        <div class="fields-2col">
+          <div class="field"><label>Bank</label><select><option>State Bank of India</option><option>HDFC Bank</option><option>ICICI Bank</option><option>Axis Bank</option></select></div>
+          <div class="field"><label>Account holder name</label><input type="text" value="Velan Fabrications Pvt. Ltd."></div>
+        </div>
+      </div>
+    </div>
+    <div class="step-nav"><a href="#" class="btn btn-text" onclick="goTo(3); return false;">Back</a><a href="#" class="btn btn-fill" onclick="goTo(5); return false;">Pay &amp; continue</a></div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-panel" id="panel-5">
+    <div class="panel">
+      <div class="panel-head"><h2>Review &amp; submit</h2><p>Take a last look before this goes to Chennai Petroleum Corp.</p></div>
+      <div class="panel-body">
+        <div class="rev-block">
+          <h3>Tender</h3>
+          <div class="rev-row"><span class="k">Tender ID</span><span class="v">GEM/2026/B/44198</span></div>
+          <div class="rev-row"><span class="k">Organization</span><span class="v">Chennai Petroleum Corp.</span></div>
+          <div class="rev-row"><span class="k">Submission deadline</span><span class="v">05 Sep 2026, 5:00 PM</span></div>
+        </div>
+        <div class="rev-block">
+          <h3>Documents</h3>
+          <div class="rev-row"><span class="k">Mandatory documents</span><span class="v">All uploaded</span></div>
+          <div class="rev-row"><span class="k">Optional documents</span><span class="v">3 uploaded</span></div>
+        </div>
+        <div class="rev-block">
+          <h3>Bid</h3>
+          <div class="rev-row"><span class="k">Technical bid</span><span class="v">Complete</span></div>
+          <div class="rev-row"><span class="k">Financial bid</span><span class="v">Complete</span></div>
+          <div class="rev-row"><span class="k">Bid security</span><span class="v">₹85,000 — Paid</span></div>
+          <div class="rev-row"><span class="k">Compliance score</span><span class="v">91%</span></div>
+        </div>
+
+        <label class="decl"><input type="checkbox">I confirm that all information provided is true and correct.</label>
+        <label class="decl"><input type="checkbox">I agree to the terms and conditions of this tender.</label>
+        <label class="decl"><input type="checkbox">I understand that false information may lead to disqualification and blacklisting.</label>
+        <label class="decl"><input type="checkbox">I authorize Pramaan to verify my documents with the relevant government portals.</label>
+      </div>
+    </div>
+    <div class="step-nav">
+      <a href="#" class="btn btn-text" onclick="goTo(4); return false;">Back</a>
+      <div style="display:flex; gap:10px;">
+        <a href="#" class="btn">Save as draft</a>
+        <a href="#" class="btn btn-fill" onclick="showConfirm(); return false;">Submit bid</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div class="confirm" id="confirmScreen">
+    <div class="confirm-icon">✓</div>
+    <h1>Bid submitted successfully</h1>
+    <p>Chennai Petroleum Corp. will review your submission before the technical bid opening on 08 Sep 2026.</p>
+    <div class="ref">Reference: BID-2026-44198-0392 · Submitted 04 Sep 2026, 6:42 PM</div>
+    <div class="actions">
+      <a href="bidder-dashboard.html" class="btn">Track bid status</a>
+      <a href="browse-tenders.html" class="btn btn-fill">Browse more tenders</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function goTo(step){
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+step).classList.add('active');
+  document.querySelectorAll('.step-node').forEach(n=>{
+    const s = parseInt(n.dataset.step);
+    n.classList.remove('current','done');
+    if(s < step) n.classList.add('done');
+    if(s === step) n.classList.add('current');
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function calcRow(input){
+  const qty = parseFloat(input.dataset.qty) || 0;
+  const price = parseFloat(input.value) || 0;
+  const total = qty * price;
+  input.closest('tr').querySelector('.row-total').textContent = total.toLocaleString('en-IN');
+  let grand = 0;
+  document.querySelectorAll('.row-total').forEach(el=>{ grand += parseFloat(el.textContent.replace(/,/g,'')) || 0; });
+  document.getElementById('grandTotal').textContent = '₹'+grand.toLocaleString('en-IN');
+  calcGST();
+}
+function calcGST(){
+  const grand = parseFloat(document.getElementById('grandTotal').textContent.replace(/[₹,]/g,'')) || 0;
+  const rate = parseFloat(document.getElementById('gstRate').value) || 0;
+  const total = grand + (grand*rate/100);
+  document.getElementById('totalGST').textContent = '₹'+total.toLocaleString('en-IN', {maximumFractionDigits:0});
+}
+function showConfirm(){
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('stepper').style.display='none';
+  document.getElementById('confirmScreen').classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>
